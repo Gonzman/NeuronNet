@@ -11,11 +11,4 @@ public class Layer {
         }
         return outputs;
     }
-
-    @Override
-    public String toString() {
-        
-        return super.toString();
-    }
-
 }

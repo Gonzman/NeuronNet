@@ -2,7 +2,7 @@ public class App {
     public static void main(String[] args) throws Exception {
 
         Neuron n00 = new Neuron(new double[]{-0.52,-1.492},0.649);
-        Neuron n01 = new Neuron(new double[]{3.347,-3.553},3.568);
+        Neuron n01 = new Neuron(new double[]{3.347,-3.553},-3.568);
         Neuron n02 = new Neuron(new double[]{15.765,-15.805},0.47);
 
         
@@ -14,9 +14,14 @@ public class App {
 
         NeuralNet neuralNet = new NeuralNet(layers);
         var test = neuralNet.predict(new double[]{1,0});
-        System.out.println(test);
+        for (double d : test) {
+            System.out.println(d);
+        }
         
-        var test1 = neuralNet.predict(new double[]{0,0});
-        System.out.println(test1);
+        var test1 = neuralNet.predict(new double[]{1,1});
+        for (double d : test1) {
+            System.out.println(d);
+        }
+        
     }
 }

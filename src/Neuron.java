@@ -1,19 +1,19 @@
 public class Neuron {
     private double bias;
-    private double[] weigts;
+    private double[] weights;
 
     public Neuron(double[] weigts, double bias){
-        this.weigts = weigts;
+        this.weights = weigts;
         this.bias = bias;
     }
 
     public double forward(double[] input){
         double value = bias;
         for (int i = 0; i < input.length; i++) {
-            value += input[i]*weigts[i];
+            value += input[i]*weights[i];
         }
 
-        return 1/(1+Math.exp(value*-1));
+        return 1/(1+Math.exp(-value));
     }
 
     public double getBias() {
@@ -24,12 +24,12 @@ public class Neuron {
         this.bias = bias;
     }
 
-    public double[] getWeigts() {
-        return weigts;
+    public double[] getWeights() {
+        return weights;
     }
 
-    public void setWeigts(double[] weigts) {
-        this.weigts = weigts;
+    public void setWeights(double[] weights) {
+        this.weights = weights;
     }
 
 }
