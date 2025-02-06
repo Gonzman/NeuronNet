@@ -1,19 +1,19 @@
 public class Neuron {
-    private double bias;
-    private double[] weigts;
 
-    public Neuron(double[] weigts, double bias){
-        this.weigts = weigts;
+    private double bias;
+    private double[] weights;
+
+    public Neuron(double[] weights, double bias) {
+        this.weights = weights;
         this.bias = bias;
     }
 
-    public double forward(double[] input){
+    public double forward(double[] input) {
         double value = bias;
         for (int i = 0; i < input.length; i++) {
-            value += input[i]*weigts[i];
+            value += input[i] * weights[i];
         }
-
-        return 1/(1+Math.exp(value*-1));
+        return 1 / (1 + Math.exp(-value));
     }
 
     public double getBias() {
@@ -24,12 +24,32 @@ public class Neuron {
         this.bias = bias;
     }
 
-    public double[] getWeigts() {
-        return weigts;
+    public double[] getWeights() {
+        return weights;
     }
 
-    public void setWeigts(double[] weigts) {
-        this.weigts = weigts;
+    public void setWeigts(double[] weights) {
+        this.weights = weights;
+    }
+
+    @Override
+    public String toString() {
+        int numInputs = weights.length;
+        String str = getClass().getSimpleName() + "( weights=[ ";
+        if (numInputs <= 5) {
+            for (int i = 0; i < numInputs; i++) {
+                str += weights[i];
+                if (i != numInputs - 1) {
+                    str += ", ";
+                }
+            }
+        } else {
+            for (int i = 0; i < 3; i++) {
+                str += weights[i] + ", ";
+            }
+            str += "..., " + weights[numInputs - 1];
+        }
+        return str + " ], bias=" + bias + " )";
     }
 
 }
