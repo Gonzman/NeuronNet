@@ -1,15 +1,19 @@
+import mode.Mode;
+
 public class Layer {
 
     private Neuron[] neurons;
+    private Mode mode;
 
-    public Layer(Neuron[] neurons) {
+    public Layer(Neuron[] neurons, Mode mode) {
         this.neurons = neurons;
+        this.mode = mode;
     }
 
     public double[] forward(double[] inputs) {
         double[] outputs = new double[neurons.length];
         for (int i = 0; i < neurons.length; i++) {
-            outputs[i] = neurons[i].forward(inputs);
+            outputs[i] = neurons[i].forward(inputs, mode);
         }
         return outputs;
     }

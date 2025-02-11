@@ -1,3 +1,5 @@
+import mode.Mode;
+
 public class Neuron {
 
     private double bias;
@@ -8,12 +10,12 @@ public class Neuron {
         this.bias = bias;
     }
 
-    public double forward(double[] input) {
+    public double forward(double[] input, Mode mode) {
         double value = bias;
         for (int i = 0; i < input.length; i++) {
             value += input[i] * weights[i];
         }
-        return 1 / (1 + Math.exp(-value));
+        return mode.compute(value);
     }
 
     public double getBias() {

@@ -1,17 +1,23 @@
+import java.util.ArrayList;
+
 public class NeuralNet {
 
-    private Layer[] layers;
+    private ArrayList<Layer> layers = new ArrayList<Layer>();
 
-    public NeuralNet(Layer[] layers) {
-        this.layers = layers;
+    public NeuralNet() {
+        
     }
 
     public double[] predict(double[] pinputs) {
         double[] inputs = pinputs;
-        for (int i = 0; i < layers.length; i++) {
-            inputs = layers[i].forward(inputs);
+        for (int i = 0; i < layers.size(); i++) {
+            inputs = layers.get(i).forward(inputs);
         }
         return inputs;
+    }
+
+    public void addLayer(Layer layer){
+        layers.add(layer);
     }
 
     @Override
