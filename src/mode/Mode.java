@@ -1,6 +1,8 @@
 package mode;
 
-public interface Mode {
+import java.io.Serializable;
+
+public interface Mode extends Serializable {
     public double compute(double input);
     public double derivative(double input);
 }

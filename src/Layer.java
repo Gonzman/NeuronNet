@@ -1,12 +1,27 @@
+import java.io.Serializable;
+
 import mode.Mode;
 
-public class Layer {
+public class Layer implements Serializable {
 
     private Neuron[] neurons;
     private Mode mode;
 
     public Layer(Mode mode, Neuron ...neurons) {
         this.neurons = neurons;
+        this.mode = mode;
+    }
+
+    public Layer(Mode mode, int numNeurons, int numInputs) {
+        this.neurons = new Neuron[numNeurons];
+        for (int i = 0; i < numNeurons; i++) {
+            double[] weights = new double[numInputs];
+            for (int j = 0; j < numInputs; j++) {
+                weights[j] = Math.random() * 2 - 1;
+            }
+            double bias = Math.random() * 2 - 1;
+            neurons[i] = new Neuron(weights, bias);
+        }
         this.mode = mode;
     }
 

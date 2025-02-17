@@ -1,6 +1,8 @@
+import java.io.Serializable;
+
 import mode.Mode;
 
-public class Neuron {
+public class Neuron implements Serializable {
 
     private double bias;
     private double[] weights;
