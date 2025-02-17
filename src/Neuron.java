@@ -34,6 +34,21 @@ public class Neuron {
         this.weights = weights;
     }
 
+    public double[] backward(double[] outputGradient, double learningRate) {
+        double[] inputGradient = new double[weights.length];
+        
+        // Compute gradients for weights and bias
+        for (int i = 0; i < weights.length; i++) {
+            inputGradient[i] = outputGradient[i] * weights[i];
+            weights[i] += learningRate * outputGradient[i];
+        }
+        
+        // Update bias
+        bias += learningRate * outputGradient[0];
+        
+        return inputGradient;
+    }
+
     @Override
     public String toString() {
         int numInputs = weights.length;

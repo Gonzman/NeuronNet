@@ -11,8 +11,8 @@ public class App {
         Neuron n10 = new Neuron(new double[] { -0.035, 35.234, -15.693 }, 4.349);
 
         NeuralNet neuralNet = new NeuralNet();
-        neuralNet.addLayer(new Layer(new Neuron[] { n00, n01, n02 }, new Sigmoid()));
-        neuralNet.addLayer(new Layer(new Neuron[] { n10 }, new Sigmoid()));
+        neuralNet.addLayer(new Layer(new Sigmoid(), n00, n01, n02 ));
+        neuralNet.addLayer(new Layer(new Sigmoid(),n10));
 
         double[] test = neuralNet.predict(new double[] { 1, 0 });
         System.out.println(Arrays.toString(test));

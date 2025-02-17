@@ -9,5 +9,9 @@ public class ReLu implements Mode{
         }
         return input;
     }
+
+    public double derivative(double input) {
+        return input > 0 ? 1 : 0;
+    }
     
 }
