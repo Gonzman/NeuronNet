@@ -1,11 +1,14 @@
+package neuralnet;
+
 import java.io.Serializable;
 
-import mode.Mode;
+import neuralnet.mode.Mode;
 
 public class Layer implements Serializable {
 
     private Neuron[] neurons;
     private Mode mode;
+    private double[] lastInputs;
 
     public Layer(Mode mode, Neuron ...neurons) {
         this.neurons = neurons;
@@ -26,6 +29,8 @@ public class Layer implements Serializable {
     }
 
     public double[] forward(double[] inputs) {
+        this.lastInputs = inputs.clone(); // Store for backpropagation
+        
         double[] outputs = new double[neurons.length];
         for (int i = 0; i < neurons.length; i++) {
             outputs[i] = neurons[i].forward(inputs, mode);
@@ -34,25 +39,33 @@ public class Layer implements Serializable {
     }
 
     public double[] backward(double[] outputGradient, double learningRate) {
+        // Initialize gradient for inputs to this layer
         double[] inputGradient = new double[neurons[0].getWeights().length];
-        double[] neuronGradients = new double[neurons.length];
         
+        // Process each neuron in the layer
         for (int i = 0; i < neurons.length; i++) {
-            neuronGradients[i] = outputGradient[i] * mode.derivative(neurons[i].getBias());
-        }
-        
-        for (int i = 0; i < neurons.length; i++) {
+            // Calculate gradient for this neuron's output
+            // δ = outputGradient * derivative of activation function
+            double delta = outputGradient[i] * mode.derivative(neurons[i].getPreActivation());
+            
             double[] weights = neurons[i].getWeights();
+            double[] inputs = neurons[i].getLastInputs();
+            
+            // Update each weight of the neuron
             for (int j = 0; j < weights.length; j++) {
-                inputGradient[j] += neuronGradients[i] * weights[j];
-                weights[j] += learningRate * neuronGradients[i];
+                // Add to the input gradient (for previous layer)
+                inputGradient[j] += delta * weights[j];
+                
+                // Update weight: w = w + learning_rate * delta * input
+                weights[j] += learningRate * delta * inputs[j];
             }
-            neurons[i].setBias(neurons[i].getBias() + learningRate * neuronGradients[i]);
+            
+            // Update bias: b = b + learning_rate * delta
+            neurons[i].setBias(neurons[i].getBias() + learningRate * delta);
         }
         
         return inputGradient;
     }
-    
 
     @Override
     public String toString() {
@@ -70,5 +83,4 @@ public class Layer implements Serializable {
         }
         return str + "\n)";
     }
-
 }

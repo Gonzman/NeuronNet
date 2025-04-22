@@ -1,6 +1,8 @@
+package neuralnet;
+
 import java.util.Arrays;
 
-import mode.Sigmoid;
+import neuralnet.mode.Sigmoid;
 
 public class App {
     public static void main(String[] args) throws Exception {

@@ -1,4 +1,4 @@
-package mode;
+package neuralnet.mode;
 
 public class TanH implements Mode {
     @Override

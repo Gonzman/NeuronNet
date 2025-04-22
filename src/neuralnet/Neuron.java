@@ -1,11 +1,16 @@
+package neuralnet;
+
 import java.io.Serializable;
 
-import mode.Mode;
+import neuralnet.mode.Mode;
 
 public class Neuron implements Serializable {
 
     private double bias;
     private double[] weights;
+    private double[] lastInputs; // Store last inputs for backpropagation
+    private double lastOutput; // Store last output for backpropagation
+    private double preActivation; // Store the value before activation function
 
     public Neuron(double[] weights, double bias) {
         this.weights = weights;
@@ -13,11 +18,14 @@ public class Neuron implements Serializable {
     }
 
     public double forward(double[] input, Mode mode) {
-        double value = bias;
+        this.lastInputs = input.clone(); // Store inputs for backpropagation
+        
+        preActivation = bias;
         for (int i = 0; i < input.length; i++) {
-            value += input[i] * weights[i];
+            preActivation += input[i] * weights[i];
         }
-        return mode.compute(value);
+        lastOutput = mode.compute(preActivation);
+        return lastOutput;
     }
 
     public double getBias() {
@@ -32,8 +40,20 @@ public class Neuron implements Serializable {
         return weights;
     }
 
-    public void setWeigts(double[] weights) {
+    public void setWeights(double[] weights) {
         this.weights = weights;
+    }
+    
+    public double getLastOutput() {
+        return lastOutput;
+    }
+    
+    public double[] getLastInputs() {
+        return lastInputs;
+    }
+    
+    public double getPreActivation() {
+        return preActivation;
     }
 
     public double[] backward(double[] outputGradient, double learningRate) {

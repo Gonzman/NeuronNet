@@ -1,4 +1,4 @@
-package mode;
+package neuralnet.mode;
 
 import java.io.Serializable;
 
