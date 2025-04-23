@@ -10,10 +10,11 @@ public class Main {
 
         NeuralNet neuralNet = new NeuralNet();
         
-        // Konfiguriert das neuronale Netz für die Klassifikation von Hunderassen (7 Klassen)
-        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 7, 7));  // 7 Neuronen, 7 Eingaben
-        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 7)); // Versteckte Schicht mit mehr Neuronen
-        neuralNet.addLayer(new Layer(new Softmax(), 7, 14));      // Ausgabeschicht mit 7 Neuronen (eine pro Rasse)
+        // Configure neural network for dog breed classification (7 classes)
+        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 7, 7));  // 7 neurons, 7 inputs
+        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 7)); // Hidden layer with more neurons
+        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 14)); // Another hidden layer for more complexity
+        neuralNet.addLayer(new Layer(new Softmax(), 7, 14));      // Output layer with 7 neurons (one per breed)
 
         System.out.println("Lade Trainingsdaten...");
         List<double[][]> trainData = CsvLoaderArray.loadDataAsArrays("src/neuralnet/train_set.csv");
