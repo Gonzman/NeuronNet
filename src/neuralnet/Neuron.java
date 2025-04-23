@@ -8,9 +8,9 @@ public class Neuron implements Serializable {
 
     private double bias;
     private double[] weights;
-    private double[] lastInputs; // Store last inputs for backpropagation
-    private double lastOutput; // Store last output for backpropagation
-    private double preActivation; // Store the value before activation function
+    private double[] lastInputs; // Letzte Inputs für Backpropagation speichern
+    private double lastOutput; // Letzte Ausgabe für Backpropagation speichern
+    private double preActivation; // Wert vor Aktivierungsfunktion speichern
 
     public Neuron(double[] weights, double bias) {
         this.weights = weights;
@@ -18,16 +18,16 @@ public class Neuron implements Serializable {
     }
 
     public double forward(double[] input, Mode mode) {
-        this.lastInputs = input.clone(); // Store inputs for backpropagation
+        this.lastInputs = input.clone(); // Inputs für Backpropagation merken
         
         preActivation = computePreActivation(input);
         lastOutput = mode.compute(preActivation);
         return lastOutput;
     }
     
-    // New method to compute pre-activation value
+    // Methode für Berechnung des Pre-Aktivierungswerts
     public double computePreActivation(double[] input) {
-        this.lastInputs = input.clone(); // Store inputs for backpropagation
+        this.lastInputs = input.clone(); // Inputs für Backpropagation merken
         
         double preAct = bias;
         for (int i = 0; i < input.length; i++) {
@@ -68,13 +68,13 @@ public class Neuron implements Serializable {
     public double[] backward(double[] outputGradient, double learningRate) {
         double[] inputGradient = new double[weights.length];
         
-        // Compute gradients for weights and bias
+        // Gradienten für Gewichte und Bias berechnen
         for (int i = 0; i < weights.length; i++) {
             inputGradient[i] = outputGradient[i] * weights[i];
             weights[i] += learningRate * outputGradient[i];
         }
         
-        // Update bias
+        // Bias aktualisieren
         bias += learningRate * outputGradient[0];
         
         return inputGradient;

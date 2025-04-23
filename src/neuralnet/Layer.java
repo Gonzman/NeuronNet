@@ -31,24 +31,24 @@ public class Layer implements Serializable {
     }
 
     public double[] forward(double[] inputs) {
-        this.lastInputs = inputs.clone(); // Store for backpropagation
+        this.lastInputs = inputs.clone(); // Speichern für Backpropagation
         
         preActivations = new double[neurons.length];
         double[] outputs = new double[neurons.length];
         
-        // First compute the raw neuron outputs
+        // Berechne erstmal die rohen Neuron-Ausgaben
         for (int i = 0; i < neurons.length; i++) {
             preActivations[i] = neurons[i].computePreActivation(inputs);
             
             if (!(mode instanceof Softmax)) {
-                // Apply activation function directly for non-softmax layers
+                // Aktivierungsfunktion direkt anwenden (nicht für Softmax)
                 outputs[i] = mode.compute(preActivations[i]);
             }
         }
         
-        // Handle Softmax activation function specially
+        // Softmax braucht Spezialbehandlung
         if (mode instanceof Softmax) {
-            // Apply softmax to all outputs together
+            // Wende Softmax auf alle Outputs zusammen an
             double max = Double.NEGATIVE_INFINITY;
             for (double val : preActivations) {
                 if (val > max) {
@@ -58,12 +58,12 @@ public class Layer implements Serializable {
             
             double sum = 0.0;
             for (int i = 0; i < preActivations.length; i++) {
-                // Subtract max for numerical stability
+                // Max abziehen für numerische Stabilität
                 outputs[i] = Math.exp(preActivations[i] - max);
                 sum += outputs[i];
             }
             
-            // Normalize to get probabilities
+            // Normalisieren für Wahrscheinlichkeiten
             for (int i = 0; i < outputs.length; i++) {
                 outputs[i] /= sum;
             }
@@ -72,39 +72,39 @@ public class Layer implements Serializable {
     }
 
     public double[] backward(double[] outputGradient, double learningRate) {
-        // Initialize gradient for inputs to this layer
+        // Initialisiere Gradient für Inputs dieser Schicht
         double[] inputGradient = new double[neurons[0].getWeights().length];
         
         double[] deltas = new double[neurons.length];
         
-        // Handle softmax derivative differently
+        // Softmax-Ableitung anders behandeln
         if (mode instanceof Softmax) {
-            // For cross-entropy loss with softmax, the delta is simplified
-            // to (predicted - target) which is the outputGradient we already have
+            // Bei Cross-Entropy mit Softmax ist Delta vereinfacht
+            // zu (vorhergesagt - ziel), was unser outputGradient schon ist
             deltas = outputGradient;
         } else {
-            // For other activation functions, calculate normal derivative
+            // Für andere Aktivierungsfunktionen normale Ableitung berechnen
             for (int i = 0; i < neurons.length; i++) {
                 deltas[i] = outputGradient[i] * mode.derivative(preActivations[i]);
             }
         }
         
-        // Process each neuron in the layer
+        // Verarbeite jedes Neuron in der Schicht
         for (int i = 0; i < neurons.length; i++) {
             double delta = deltas[i];
             
             double[] weights = neurons[i].getWeights();
             
-            // Update each weight of the neuron
+            // Update jedes Gewicht des Neurons
             for (int j = 0; j < weights.length; j++) {
-                // Add to the input gradient (for previous layer)
+                // Füge zum Input-Gradienten hinzu (für vorherige Schicht)
                 inputGradient[j] += delta * weights[j];
                 
-                // Update weight: w = w + learning_rate * delta * input
+                // Gewicht aktualisieren: w = w + Lernrate * delta * input
                 weights[j] += learningRate * delta * lastInputs[j];
             }
             
-            // Update bias: b = b + learning_rate * delta
+            // Bias aktualisieren: b = b + Lernrate * delta
             neurons[i].setBias(neurons[i].getBias() + learningRate * delta);
         }
         
