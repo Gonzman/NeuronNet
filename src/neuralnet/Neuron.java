@@ -20,12 +20,21 @@ public class Neuron implements Serializable {
     public double forward(double[] input, Mode mode) {
         this.lastInputs = input.clone(); // Store inputs for backpropagation
         
-        preActivation = bias;
-        for (int i = 0; i < input.length; i++) {
-            preActivation += input[i] * weights[i];
-        }
+        preActivation = computePreActivation(input);
         lastOutput = mode.compute(preActivation);
         return lastOutput;
+    }
+    
+    // New method to compute pre-activation value
+    public double computePreActivation(double[] input) {
+        this.lastInputs = input.clone(); // Store inputs for backpropagation
+        
+        double preAct = bias;
+        for (int i = 0; i < input.length; i++) {
+            preAct += input[i] * weights[i];
+        }
+        this.preActivation = preAct;
+        return preAct;
     }
 
     public double getBias() {

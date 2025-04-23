@@ -3,12 +3,15 @@ package neuralnet;
 import java.io.Serializable;
 
 import neuralnet.mode.Mode;
+import neuralnet.mode.Softmax;
 
 public class Layer implements Serializable {
 
     private Neuron[] neurons;
     private Mode mode;
     private double[] lastInputs;
+    private double[] lastOutputs;
+    private double[] preActivations;
 
     public Layer(Mode mode, Neuron ...neurons) {
         this.neurons = neurons;
@@ -31,10 +34,43 @@ public class Layer implements Serializable {
     public double[] forward(double[] inputs) {
         this.lastInputs = inputs.clone(); // Store for backpropagation
         
+        preActivations = new double[neurons.length];
         double[] outputs = new double[neurons.length];
+        
+        // First compute the raw neuron outputs
         for (int i = 0; i < neurons.length; i++) {
-            outputs[i] = neurons[i].forward(inputs, mode);
+            preActivations[i] = neurons[i].computePreActivation(inputs);
+            
+            if (!(mode instanceof Softmax)) {
+                // Apply activation function directly for non-softmax layers
+                outputs[i] = mode.compute(preActivations[i]);
+            }
         }
+        
+        // Handle Softmax activation function specially
+        if (mode instanceof Softmax) {
+            // Apply softmax to all outputs together
+            double max = Double.NEGATIVE_INFINITY;
+            for (double val : preActivations) {
+                if (val > max) {
+                    max = val;
+                }
+            }
+            
+            double sum = 0.0;
+            for (int i = 0; i < preActivations.length; i++) {
+                // Subtract max for numerical stability
+                outputs[i] = Math.exp(preActivations[i] - max);
+                sum += outputs[i];
+            }
+            
+            // Normalize to get probabilities
+            for (int i = 0; i < outputs.length; i++) {
+                outputs[i] /= sum;
+            }
+        }
+        
+        this.lastOutputs = outputs.clone();
         return outputs;
     }
 
@@ -42,14 +78,25 @@ public class Layer implements Serializable {
         // Initialize gradient for inputs to this layer
         double[] inputGradient = new double[neurons[0].getWeights().length];
         
+        double[] deltas = new double[neurons.length];
+        
+        // Handle softmax derivative differently
+        if (mode instanceof Softmax) {
+            // For cross-entropy loss with softmax, the delta is simplified
+            // to (predicted - target) which is the outputGradient we already have
+            deltas = outputGradient;
+        } else {
+            // For other activation functions, calculate normal derivative
+            for (int i = 0; i < neurons.length; i++) {
+                deltas[i] = outputGradient[i] * mode.derivative(preActivations[i]);
+            }
+        }
+        
         // Process each neuron in the layer
         for (int i = 0; i < neurons.length; i++) {
-            // Calculate gradient for this neuron's output
-            // δ = outputGradient * derivative of activation function
-            double delta = outputGradient[i] * mode.derivative(neurons[i].getPreActivation());
+            double delta = deltas[i];
             
             double[] weights = neurons[i].getWeights();
-            double[] inputs = neurons[i].getLastInputs();
             
             // Update each weight of the neuron
             for (int j = 0; j < weights.length; j++) {
@@ -57,7 +104,7 @@ public class Layer implements Serializable {
                 inputGradient[j] += delta * weights[j];
                 
                 // Update weight: w = w + learning_rate * delta * input
-                weights[j] += learningRate * delta * inputs[j];
+                weights[j] += learningRate * delta * lastInputs[j];
             }
             
             // Update bias: b = b + learning_rate * delta
