@@ -10,7 +10,6 @@ public class Layer implements Serializable {
     private Neuron[] neurons;
     private Mode mode;
     private double[] lastInputs;
-    private double[] lastOutputs;
     private double[] preActivations;
 
     public Layer(Mode mode, Neuron ...neurons) {
@@ -69,8 +68,6 @@ public class Layer implements Serializable {
                 outputs[i] /= sum;
             }
         }
-        
-        this.lastOutputs = outputs.clone();
         return outputs;
     }
 

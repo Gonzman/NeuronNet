@@ -1,17 +1,12 @@
 package neuralnet;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import neuralnet.mode.LeakyReLu;
-import neuralnet.mode.ReLu;
-import neuralnet.mode.Sigmoid;
 import neuralnet.mode.Softmax;
 
 public class Main {
     public static void main(String[] args) {
-        Random random = new Random();
 
         NeuralNet neuralNet = new NeuralNet();
         
@@ -22,7 +17,7 @@ public class Main {
         neuralNet.addLayer(new Layer(new Softmax(), 7, 14));      // Output layer with 7 neurons (one per breed)
 
         System.out.println("Loading training data...");
-        List<double[][]> trainData = CsvLoaderArray.loadDataAsArrays("src\\neuralnet\\train_set.csv");
+        List<double[][]> trainData = CsvLoaderArray.loadDataAsArrays("src/neuralnet/train_set.csv");
         double[][] trainInputs = trainData.get(0);
         double[][] trainTargets = trainData.get(1);
         
@@ -37,7 +32,7 @@ public class Main {
         
         // Load and normalize test data
         System.out.println("\nEvaluating on test set...");
-        List<double[][]> testData = CsvLoaderArray.loadDataAsArrays("src\\neuralnet\\test_set.csv");
+        List<double[][]> testData = CsvLoaderArray.loadDataAsArrays("src/neuralnet/test_set.csv");
         double[][] testInputs = testData.get(0);
         double[][] testTargets = testData.get(1);
         
