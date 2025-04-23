@@ -39,7 +39,7 @@ public class NeuralNet implements Serializable {
             for (int i = 0; i < inputs.length; i++) {
                 double[] output = predict(inputs[i]);
 
-                // Compute loss (Mean Squared Error)
+                // Berechne Fehler (Mean Squared Error)
                 double[] error = new double[output.length];
                 double loss = 0.0;
                 for (int j = 0; j < output.length; j++) {
@@ -49,13 +49,13 @@ public class NeuralNet implements Serializable {
                 totalLoss += loss / output.length;
 
                 // Backpropagation
-                double[] gradient = error; // Assuming last layer uses error directly
+                double[] gradient = error; // Letzte Schicht nutzt Fehler direkt
                 for (int j = layers.size() - 1; j >= 0; j--) {
                     gradient = layers.get(j).backward(gradient, learningRate);
                 }
             }
 
-            // Print loss for monitoring
+            // Gib Loss aus zum Überwachen
             System.out.println("Epoch " + (epoch + 1) + " Loss: " + (totalLoss / inputs.length));
         }
 

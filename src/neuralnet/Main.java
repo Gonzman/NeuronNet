@@ -10,38 +10,38 @@ public class Main {
 
         NeuralNet neuralNet = new NeuralNet();
         
-        // Configure neural network for dog breed classification (7 classes)
-        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 7, 7));  // 7 neurons, 7 inputs
-        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 7)); // Hidden layer with more neurons
-        neuralNet.addLayer(new Layer(new Softmax(), 7, 14));      // Output layer with 7 neurons (one per breed)
+        // Konfiguriert das neuronale Netz für die Klassifikation von Hunderassen (7 Klassen)
+        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 7, 7));  // 7 Neuronen, 7 Eingaben
+        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 7)); // Versteckte Schicht mit mehr Neuronen
+        neuralNet.addLayer(new Layer(new Softmax(), 7, 14));      // Ausgabeschicht mit 7 Neuronen (eine pro Rasse)
 
-        System.out.println("Loading training data...");
+        System.out.println("Lade Trainingsdaten...");
         List<double[][]> trainData = CsvLoaderArray.loadDataAsArrays("src/neuralnet/train_set.csv");
         double[][] trainInputs = trainData.get(0);
         double[][] trainTargets = trainData.get(1);
         
-        // Normalize the input data to prevent NaN values
+        // Normalisiert die Eingabedaten, um NaN-Werte zu vermeiden
         double[] means = calculateMeans(trainInputs);
         double[] stdDevs = calculateStdDevs(trainInputs);
         double[][] normalizedTrainInputs = normalizeInputs(trainInputs, means, stdDevs);
         
-        System.out.println("Training neural network for dog breed classification...");
-        // Train with a learning rate adjusted for multi-class classification
+        System.out.println("Trainiere neuronales Netz für die Klassifikation von Hunderassen...");
+        // Trainiert mit einer Lernrate, die für Mehrklassenklassifikation angepasst ist
         neuralNet.train(normalizedTrainInputs, trainTargets, 0.002, 1000);
         
-        // Load and normalize test data
-        System.out.println("\nEvaluating on test set...");
+        // Lädt und normalisiert Testdaten
+        System.out.println("\nBewertung auf dem Testset...");
         List<double[][]> testData = CsvLoaderArray.loadDataAsArrays("src/neuralnet/test_set.csv");
         double[][] testInputs = testData.get(0);
         double[][] testTargets = testData.get(1);
         
         double[][] normalizedTestInputs = normalizeInputs(testInputs, means, stdDevs);
         
-        // Evaluate on test set
+        // Bewertung auf dem Testset
         int correct = 0;
         int total = normalizedTestInputs.length;
         
-        // Define breed names to make output more meaningful
+        // Definiert Rassennamen, um die Ausgabe aussagekräftiger zu machen
         String[] breedNames = {
             "Schäferhund", 
             "Dackel",
@@ -55,26 +55,26 @@ public class Main {
         for (int i = 0; i < total; i++) {
             double[] prediction = neuralNet.predict(normalizedTestInputs[i]);
             
-            // Find the index of the highest value in the prediction array (most likely breed)
+            // Findet den Index des höchsten Wertes im Vorhersage-Array (wahrscheinlichste Rasse)
             int predictedBreedIdx = findMaxIndex(prediction);
             
-            // Find the actual breed (index of value 1.0 in the target one-hot encoded array)
+            // Findet die tatsächliche Rasse (Index des Wertes 1.0 im Ziel-One-Hot-Encoded-Array)
             int actualBreedIdx = findMaxIndex(testTargets[i]);
             
             if (predictedBreedIdx == actualBreedIdx) {
                 correct++;
             }
             
-            System.out.printf("Sample %d: Predicted breed: %s (%.2f), Actual breed: %s, %s%n", 
+            System.out.printf("Beispiel %d: Vorhergesagte Rasse: %s (%.2f), Tatsächliche Rasse: %s, %s%n", 
                     i, 
                     breedNames[predictedBreedIdx], 
                     prediction[predictedBreedIdx],
                     breedNames[actualBreedIdx], 
-                    predictedBreedIdx == actualBreedIdx ? "CORRECT" : "WRONG");
+                    predictedBreedIdx == actualBreedIdx ? "RICHTIG" : "FALSCH");
         }
         
         double accuracy = (double) correct / total * 100;
-        System.out.printf("\nTest Accuracy: %.2f%% (%d/%d correct)%n", 
+        System.out.printf("\nTestgenauigkeit: %.2f%% (%d/%d richtig)%n", 
                 accuracy, correct, total);
 
         
@@ -83,17 +83,17 @@ public class Main {
                 }, means, stdDevs));
 
         int predictedBreedIdx = findMaxIndex(test);
-        System.out.println("Predicted breed: " + breedNames[predictedBreedIdx] + " with confidence: " + 
+        System.out.println("Vorhergesagte Rasse: " + breedNames[predictedBreedIdx] + " mit Konfidenz: " + 
                 String.format("%.2f", test[predictedBreedIdx]));
 
-        // Print all confidence values
-        System.out.println("\nAll confidence values:");
+        // Gibt alle Konfidenzwerte aus
+        System.out.println("\nAlle Konfidenzwerte:");
         for (int i = 0; i < test.length; i++) {
             System.out.println(breedNames[i] + ": " + String.format("%.2f", test[i]));
         }
     }
     
-    // Helper method to find the index of the maximum value in an array
+    // Hilfsmethode, um den Index des maximalen Wertes in einem Array zu finden
     private static int findMaxIndex(double[] array) {
         int maxIdx = 0;
         for (int i = 1; i < array.length; i++) {
@@ -104,7 +104,7 @@ public class Main {
         return maxIdx;
     }
     
-    // Normalize all input samples
+    // Normalisiert alle Eingabeproben
     private static double[][] normalizeInputs(double[][] inputs, double[] means, double[] stdDevs) {
         double[][] normalized = new double[inputs.length][inputs[0].length];
         for (int i = 0; i < inputs.length; i++) {
@@ -113,12 +113,12 @@ public class Main {
         return normalized;
     }
     
-    // Normalize a single input
+    // Normalisiert eine einzelne Eingabe
     private static double[] normalizeInput(double[] input, double[] means, double[] stdDevs) {
         double[] normalized = new double[input.length];
         for (int i = 0; i < input.length; i++) {
             if (stdDevs[i] == 0) {
-                normalized[i] = 0; // Avoid division by zero
+                normalized[i] = 0; // Vermeidet Division durch Null
             } else {
                 normalized[i] = (input[i] - means[i]) / stdDevs[i];
             }
@@ -126,7 +126,7 @@ public class Main {
         return normalized;
     }
     
-    // Calculate means for each feature
+    // Berechnet Mittelwerte für jeden Feature
     private static double[] calculateMeans(double[][] inputs) {
         int numFeatures = inputs[0].length;
         double[] means = new double[numFeatures];
@@ -142,7 +142,7 @@ public class Main {
         return means;
     }
     
-    // Calculate standard deviations for each feature
+    // Berechnet Standardabweichungen für jeden Feature
     private static double[] calculateStdDevs(double[][] inputs) {
         int numFeatures = inputs[0].length;
         double[] means = calculateMeans(inputs);
@@ -155,7 +155,7 @@ public class Main {
                 sumSquaredDiff += diff * diff;
             }
             stdDevs[i] = Math.sqrt(sumSquaredDiff / inputs.length);
-            // Prevent division by zero in normalization step
+            // Verhindert Division durch Null 
             if (stdDevs[i] < 0.0001) {
                 stdDevs[i] = 1.0;
             }
