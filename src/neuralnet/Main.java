@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import neuralnet.mode.LeakyReLu;
+import neuralnet.mode.ReLu;
 import neuralnet.mode.Sigmoid;
 import neuralnet.mode.Softmax;
 
@@ -17,6 +18,7 @@ public class Main {
         // Configure neural network for dog breed classification (7 classes)
         neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 7, 7));  // 7 neurons, 7 inputs
         neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 7)); // Hidden layer with more neurons
+        neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 14)); // Another hidden layer for more complexity
         neuralNet.addLayer(new Layer(new Softmax(), 7, 14));      // Output layer with 7 neurons (one per breed)
 
         System.out.println("Loading training data...");
