@@ -2,9 +2,11 @@ package neuralnet;
 
 import java.util.List;
 
-import neuralnet.mode.LeakyReLu;
-import neuralnet.mode.Softmax;
 
+import neuralnet.mode.LeakyReLu;
+import neuralnet.mode.ReLu;
+import neuralnet.mode.Sigmoid;
+import neuralnet.mode.Softmax;
 public class Main {
     public static void main(String[] args) {
 
@@ -13,7 +15,7 @@ public class Main {
         // Configure neural network for dog breed classification (7 classes)
         neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 7, 7));  // 7 neurons, 7 inputs
         neuralNet.addLayer(new Layer(new LeakyReLu(0.01), 14, 7)); // Hidden layer with more neurons
-        neuralNet.addLayer(new Layer(new Softmax(), 7, 14));      // Output layer with 7 neurons (one per breed)
+        neuralNet.addLayer(new Layer(new Sigmoid(), 7, 14));      // Output layer with 7 neurons (one per breed)
 
         System.out.println("Lade Trainingsdaten...");
         List<double[][]> trainData = CsvLoaderArray.loadDataAsArrays("src/neuralnet/train_set.csv");
@@ -27,7 +29,8 @@ public class Main {
         
         System.out.println("Trainiere neuronales Netz für die Klassifikation von Hunderassen...");
         // Trainiert mit einer Lernrate, die für Mehrklassenklassifikation angepasst ist
-        neuralNet.train(normalizedTrainInputs, trainTargets, 0.002, 1000);
+        neuralNet.train(normalizedTrainInputs, trainTargets, 0.005, 10000);
+        neuralNet.train(normalizedTrainInputs, trainTargets, 0.002, 10000);
         
         // Lädt und normalisiert Testdaten
         System.out.println("\nBewertung auf dem Testset...");
